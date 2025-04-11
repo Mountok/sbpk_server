@@ -44,9 +44,11 @@ func main() {
 			return
 		}
 
-		// Получаем курс с CoinGecko
+		// Формируем запрос
 		url := "https://api.coingecko.com/api/v3/simple/price?ids=" + currencyID(to) + "&vs_currencies=" + from
 		client := resty.New()
+		log.Println("Запрос к API CoinGecko:", url) // Логируем запрос
+
 		resp, err := client.R().
 			SetHeader("Accept", "application/json").
 			SetResult(map[string]map[string]float64{}).
@@ -54,6 +56,7 @@ func main() {
 
 		if err != nil || resp.IsError() {
 			log.Println("Ошибка при получении курса:", err)
+			log.Println("Ответ от API:", resp) // Логируем ответ от API
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Не удалось получить курс"})
 			return
 		}
